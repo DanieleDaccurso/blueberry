@@ -25,3 +25,17 @@ type JsonResponse struct {
 func (r *JsonResponse) Render(w http.ResponseWriter) {
 	renderJsonResponse(r, w)
 }
+
+func NewJsonResponse(Content interface{}) *JsonResponse {
+	j := new(JsonResponse)
+	j.Content = Content
+	return j
+}
+
+func NewErrorJsonResponse(err error) *JsonResponse {
+	j := NewJsonResponse(map[string]string{
+		"error": err.Error(),
+	})
+	j.Status = 500
+	return j
+}
