@@ -17,10 +17,12 @@ type Router struct {
 	// See: github.com/danieledaccurso/blueberry/events
 	preRequest  *events.EventCollection
 	postRequest *events.EventCollection
-	postMatch *events.EventCollection
+	postMatch   *events.EventCollection
 
 	RequestResolver *RequestResolver
 }
+
+type RValues map[string]string
 
 // Create a new Router
 func NewRouter() *Router {
@@ -64,7 +66,6 @@ func (r *Router) PrintRoutes(writer io.Writer) {
 	t.AddRow("ID", "METHODS", "PATH", "CONTROLLER", "METHOD")
 	t.Fprint(writer)
 }
-
 
 func (r *Router) NewRoute(path string, fn interface{}) *Route {
 	route := newRoute(path, fn)
@@ -115,7 +116,7 @@ func (r *Router) callRoute(rreq *RRequest, w http.ResponseWriter, h *http.Reques
 	values := make([]reflect.Value, 0)
 	route := rreq.Route
 
-	ctx := createInjectorContext(h, route, r, w)
+	ctx := createInjectorContext(h, route, r, w, rreq)
 
 	// argument resolving switch is only called, if a method has more than one argument
 	if route.RMethod.Type().NumIn() > 0 {
@@ -128,7 +129,7 @@ func (r *Router) callRoute(rreq *RRequest, w http.ResponseWriter, h *http.Reques
 			case "*http.Request":
 				values = append(values, reflect.ValueOf(h))
 			default:
-				values = append(values, reflect.ValueOf(r.inject(arg.String(), ctx)))
+				values = append(values, reflect.ValueOf(r.inject(arg.Name(), arg.String(), ctx)))
 			}
 		}
 	}
@@ -142,10 +143,10 @@ func (r *Router) callRoute(rreq *RRequest, w http.ResponseWriter, h *http.Reques
 	}
 }
 
-func (r *Router) inject(t string, ctx *InjectorContext) interface{} {
+func (r *Router) inject(e string, t string, ctx *InjectorContext) interface{} {
 	if len(r.injectors) != 0 {
 		for _, injector := range r.injectors {
-			if injector.Supports(t) {
+			if injector.Supports(t, e) {
 				return injector.Get(ctx)
 			}
 		}

@@ -1,8 +1,8 @@
 package router
 
 import (
-	"testing"
 	"net/http"
+	"testing"
 )
 
 func TestNewRouter(t *testing.T) {

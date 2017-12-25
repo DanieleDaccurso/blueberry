@@ -27,9 +27,9 @@ type PostRequestEventContext struct {
 }
 
 type PostMatchEventContext struct {
-	Request *http.Request
+	Request        *http.Request
 	ResponseWriter http.ResponseWriter
-	RRequest *RRequest
+	RRequest       *RRequest
 }
 
 type PreRequestEvent interface {
@@ -61,8 +61,8 @@ func createPostRequestEventContext(h *http.Request, w http.ResponseWriter, vs []
 
 func createPostMatchEventContext(h *http.Request, w http.ResponseWriter, rr *RRequest) *PostMatchEventContext {
 	return &PostMatchEventContext{
-		Request: h,
+		Request:        h,
 		ResponseWriter: w,
-		RRequest: rr,
+		RRequest:       rr,
 	}
 }

@@ -1,9 +1,9 @@
 package router
 
 import (
+	"log"
 	"reflect"
 	"strings"
-	"log"
 )
 
 type Segment struct {
@@ -14,7 +14,7 @@ type Segment struct {
 // Route represents one callable route
 type Route struct {
 	// Methods contains a slice of strings, identifying the allowed HTTP methods for the current route
-	Methods []string
+	AllowedMethods []string
 	// RMethod contains the reflect.Method of the Controller's action to be called on the current route
 	RMethod reflect.Value
 	// Path contains the path for the current route
@@ -49,6 +49,12 @@ func (r *Route) Match(rr *RRequest) bool {
 	}
 
 	return true
+}
+
+func (r *Route) Methods(methods ...string) {
+	for _, method := range methods {
+		r.AllowedMethods = append(r.AllowedMethods, method)
+	}
 }
 
 func (r *Route) initRoute() {

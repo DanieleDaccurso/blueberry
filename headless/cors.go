@@ -3,7 +3,6 @@ package headless
 import "github.com/danieledaccurso/blueberry/router"
 
 type CORSEvent struct {
-
 }
 
 func (c *CORSEvent) Exec(ctx *router.PreRequestEventContext) {
