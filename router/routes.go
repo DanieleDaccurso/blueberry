@@ -57,6 +57,16 @@ func (r *Route) Methods(methods ...string) {
 	}
 }
 
+func (r *Route) methodAllowed(rm string) bool {
+	for _, m := range r.AllowedMethods {
+		if rm == m {
+			return true
+		}
+	}
+
+	return false
+}
+
 func (r *Route) initRoute() {
 	r.Path = pathRgx.ReplaceAllString(r.Path, "/")
 	r.Path = strings.Trim(r.Path, "/")

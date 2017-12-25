@@ -129,7 +129,7 @@ func (r *Router) callRoute(rreq *RRequest, w http.ResponseWriter, h *http.Reques
 			case "*http.Request":
 				values = append(values, reflect.ValueOf(h))
 			default:
-				values = append(values, reflect.ValueOf(r.inject(arg.Name(), arg.String(), ctx)))
+				values = append(values, reflect.ValueOf(r.inject("", arg.String(), ctx)))
 			}
 		}
 	}
@@ -146,7 +146,7 @@ func (r *Router) callRoute(rreq *RRequest, w http.ResponseWriter, h *http.Reques
 func (r *Router) inject(e string, t string, ctx *InjectorContext) interface{} {
 	if len(r.injectors) != 0 {
 		for _, injector := range r.injectors {
-			if injector.Supports(t, e) {
+			if injector.Supports(e, t) {
 				return injector.Get(ctx)
 			}
 		}

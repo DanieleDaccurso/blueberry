@@ -14,7 +14,6 @@ Can do:
 
 Work in Progress:
 
-- Method matching
 - CORS / Preflight plugin (semi-working)
 
 Other todo: 

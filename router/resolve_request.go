@@ -32,7 +32,8 @@ func (r *RequestResolver) Resolve(req *http.Request) *RRequest {
 	rr.Route = nil
 
 	for _, route := range r.Router.routes {
-		if len(rr.Parts) != len(route.Segments) {
+		if len(rr.Parts) != len(route.Segments) ||
+			!route.methodAllowed(strings.ToUpper(req.Method)) {
 			continue
 		}
 

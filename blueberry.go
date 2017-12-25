@@ -1,11 +1,10 @@
 package blueberry
 
 import (
+	"fmt"
 	"github.com/danieledaccurso/blueberry/glue"
-	"github.com/danieledaccurso/blueberry/headless"
 	"github.com/danieledaccurso/blueberry/router"
 	"net/http"
-	"fmt"
 )
 
 type AppConfig struct {
@@ -37,7 +36,7 @@ func (a *App) WithJsonResponse() *App {
 }
 
 func (a *App) WithCORSEnabled() *App {
-	a.Router.AppendPreRequestEvent(new(headless.CORSEvent))
+	a.Router.AppendPreRequestEvent(new(glue.CORSEvent))
 	return a
 }
 
