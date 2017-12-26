@@ -2,9 +2,10 @@ package blueberry
 
 import (
 	"fmt"
+	"net/http"
+
 	"github.com/danieledaccurso/blueberry/glue"
 	"github.com/danieledaccurso/blueberry/router"
-	"net/http"
 )
 
 type AppConfig struct {
@@ -30,13 +31,26 @@ func New() *App {
 	return a
 }
 
-func (a *App) WithJsonResponse() *App {
+func CreateDefault() *App {
+	a := New()
+	a.EnableCORS()
+	a.EnableJSONResponse()
+	a.EnableParams()
+	return a
+}
+
+func (a *App) EnableJSONResponse() *App {
 	a.Router.AppendPostRequestEvent(new(glue.RenderResponseEvent))
 	return a
 }
 
-func (a *App) WithCORSEnabled() *App {
+func (a *App) EnableCORS() *App {
 	a.Router.AppendPreRequestEvent(new(glue.CORSEvent))
+	return a
+}
+
+func (a *App) EnableParams() *App {
+	a.Router.AddInjector(new(glue.ParameterInjector))
 	return a
 }
 

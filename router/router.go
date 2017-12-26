@@ -1,11 +1,12 @@
 package router
 
 import (
-	"github.com/danieledaccurso/blueberry/clitable"
-	"github.com/danieledaccurso/blueberry/events"
 	"io"
 	"net/http"
 	"reflect"
+
+	"github.com/danieledaccurso/blueberry/clitable"
+	"github.com/danieledaccurso/blueberry/events"
 )
 
 // Router represents one implementation of the http.Handler interface
@@ -19,7 +20,7 @@ type Router struct {
 	postRequest *events.EventCollection
 	postMatch   *events.EventCollection
 
-	RequestResolver *RequestResolver
+	requestResolver *RequestResolver
 }
 
 type RValues map[string]string
@@ -30,7 +31,7 @@ func NewRouter() *Router {
 	r.preRequest = new(events.EventCollection)
 	r.postRequest = new(events.EventCollection)
 	r.postMatch = new(events.EventCollection)
-	r.RequestResolver = NewRequestResolver(r)
+	r.requestResolver = NewRequestResolver(r)
 	return r
 }
 
@@ -109,14 +110,12 @@ func (r *Router) AppendPostMatchEvent(ev PostMatchEvent) {
 }
 
 func (r *Router) findRequestRoute(h *http.Request) *RRequest {
-	return r.RequestResolver.Resolve(h)
+	return r.requestResolver.Resolve(h)
 }
 
 func (r *Router) callRoute(rreq *RRequest, w http.ResponseWriter, h *http.Request) {
 	values := make([]reflect.Value, 0)
 	route := rreq.Route
-
-	ctx := createInjectorContext(h, route, r, w, rreq)
 
 	// argument resolving switch is only called, if a method has more than one argument
 	if route.RMethod.Type().NumIn() > 0 {
@@ -129,7 +128,8 @@ func (r *Router) callRoute(rreq *RRequest, w http.ResponseWriter, h *http.Reques
 			case "*http.Request":
 				values = append(values, reflect.ValueOf(h))
 			default:
-				values = append(values, reflect.ValueOf(r.inject("", arg.String(), ctx)))
+				ctx := createInjectorContext(h, route, r, w, rreq, arg.String())
+				values = append(values, reflect.ValueOf(r.inject(ctx)))
 			}
 		}
 	}
@@ -143,10 +143,10 @@ func (r *Router) callRoute(rreq *RRequest, w http.ResponseWriter, h *http.Reques
 	}
 }
 
-func (r *Router) inject(e string, t string, ctx *InjectorContext) interface{} {
+func (r *Router) inject(ctx *InjectorContext) interface{} {
 	if len(r.injectors) != 0 {
 		for _, injector := range r.injectors {
-			if injector.Supports(e, t) {
+			if injector.Supports(ctx) {
 				return injector.Get(ctx)
 			}
 		}

@@ -3,7 +3,7 @@
 
 A Go Web-API Framework with a comfortable and object-oriented*ish* workflow. 
 
-Can do: 
+#### CAN DO 
 
 - Routes
 - Catch-All Routes
@@ -12,11 +12,11 @@ Can do:
 - Post-Request events (for example, for your favorite template engine)
 - Json Responses
 
-Work in Progress:
+#### WORK IN PROGRESS
 
 - CORS / Preflight plugin (semi-working)
 
-Other todo: 
+#### OTHER TODO
 
 - Cache a lot to make it faster
 - Write more tests

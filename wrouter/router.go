@@ -1,12 +1,13 @@
 package wrouter
 
 import (
-	"github.com/danieledaccurso/blueberry/clitable"
-	"github.com/danieledaccurso/blueberry/events"
 	"io"
 	"net/http"
 	"reflect"
 	"strconv"
+
+	"github.com/danieledaccurso/blueberry/clitable"
+	"github.com/danieledaccurso/blueberry/events"
 )
 
 var AllowedMethods = []string{"get", "post", "put", "patch", "head", "trace", "connect", "options", "delete"}
